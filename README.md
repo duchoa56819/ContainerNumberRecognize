@@ -13,9 +13,56 @@
 - **BIC Shipping Line Database**: Identifies carrier names (Triton, Maersk, MSC, CMA CGM, Evergreen, COSCO, ONE, Hapag-Lloyd, etc.).
 - **ISO Size/Type Code Parser**: Identifies container length, height, and type (e.g., `45G1` = 40ft High Cube General Purpose, `22R1` = 20ft Reefer).
 - **Multiple Interfaces**:
-  1. 🖥️ **Streamlit Web Application** (`app.py`)
-  2. 💻 **Command Line Tool** (`cli.py`)
-  3. 🚀 **REST API Server** (`api.py`)
+  1. 📱 **Mobile Phone Camera Scanner** (`/camera` - Real-time rear camera scanning with audio beep & haptics)
+  2. 🖥️ **Streamlit Web Application** (`app.py`)
+  3. 💻 **Command Line Tool** (`cli.py`)
+  4. 🚀 **REST API Server** (`api.py`)
+
+---
+
+## 📱 Using with a Phone Camera (Zero Install!)
+
+You can turn any smartphone (iPhone, Samsung, Xiaomi, etc.) into a handheld shipping container scanner with **no app installation required**:
+
+### 1. Dedicated Mobile Scanner (`/camera`)
+Double-click `start_phone_scanner.bat` or run:
+```powershell
+python api.py
+```
+On your phone's browser (Safari or Chrome), navigate to:
+```
+http://<YOUR_PC_LAN_IP>:8000/camera
+```
+*(The exact IP address is printed in the terminal when you start the server).*
+
+**Mobile Scanner Features:**
+- 📷 **Full-screen rear camera feed** with container alignment target box.
+- ⚡ **Auto-Scan Mode**: Automatically analyzes frames every 1.5 seconds without pressing any buttons.
+- 🔊 **Instant Audio & Haptic Feedback**: Synthetic beep and vibration when a valid ISO container is recognized.
+- 📋 **One-tap Copy**: Easily copy the formatted container code.
+- 📁 **Native Camera Fallback**: Tap "Native Camera" to take high-resolution snapshots with your phone's default camera app.
+
+---
+
+### 🌐 Connecting Phone to PC
+
+Depending on your setup, choose the connection method that best fits:
+
+#### Method A: Same Wi-Fi (LAN)
+Make sure your phone and PC are connected to the same Wi-Fi router. Open:
+`http://192.168.1.x:8000/camera` (or port `8501` for Streamlit).
+
+#### Method B: Global HTTPS Cloudflare Tunnel (Recommended for Remote & SSL)
+Modern mobile browsers require HTTPS for camera permissions. To get an instant secure public HTTPS link with SSL:
+Double-click [**`start_phone_tunnel.bat`**](file:///d:/_Personal/ContainerRecog/start_phone_tunnel.bat)
+It generates a secure public link:
+`https://your-tunnel-name.trycloudflare.com/camera`
+Open that link on any phone worldwide over 4G/5G/Wi-Fi!
+
+#### Method C: Android USB Cable (`adb reverse`)
+Plug your Android phone into the PC via USB and double-click [**`connect_usb.bat`**](file:///d:/_Personal/ContainerRecog/connect_usb.bat).
+On your phone's Chrome browser, simply open:
+`http://localhost:8000/camera`
 
 ---
 
@@ -23,7 +70,8 @@
 
 ```mermaid
 flowchart TD
-    Input[Input Container Image] --> Stage1[Stage 1: YOLO Detector]
+    Phone[📱 Phone Camera / Browser] -->|Live Frame / Upload| API[FastAPI / Streamlit]
+    API --> Stage1[Stage 1: YOLO Detector]
     Stage1 -->|Detect Code Region| Crop[Crop with 8% Margin Padding]
     Stage1 -->|Fallback: No Region| FullScan[Full-Image Multi-Pass OCR]
     Crop --> Stage2[Stage 2: RapidOCR Multi-Pass]
@@ -32,26 +80,19 @@ flowchart TD
     Stage3 --> AutoCorrect[Intelligent Auto-Correction]
     AutoCorrect --> Modulo11[Modulo-11 Check Digit Verification]
     Modulo11 --> BIC[BIC Carrier Lookup & Size/Type Parser]
-    BIC --> Output[Annotated Visuals + Structured JSON]
+    BIC --> Output[Real-Time Visuals, Haptics & Structured JSON]
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Desktop Quick Start
 
 ### 1. Launch the Interactive Web Application
-
 Double-click `start_app.bat` or run:
 ```powershell
 python -m streamlit run app.py
 ```
 Open your browser at `http://localhost:8501`.
-
-**Features in Web App:**
-- **Single Identifier**: Drag-and-drop any photo, pick from test dataset samples, or snap a photo using your webcam.
-- **Batch Dataset Benchmark**: Benchmark recognition accuracy across 20-100 images with downloadable CSV reports.
-- **Model Studio**: View dataset statistics and launch fine-tuning jobs.
-- **ISO 6346 Calculator**: Inspect step-by-step modulus 11 math for any container code.
 
 ---
 
@@ -59,7 +100,7 @@ Open your browser at `http://localhost:8501`.
 
 #### Predict on a single image:
 ```powershell
-python cli.py predict --image test/images/1114039705751937665_0060_jpg.rf.dd3301958b55de4c06163d412bce4e26.jpg --output result.json --save-image output.jpg
+python cli.py predict --image 1.jpg --output result.json --save-image output.jpg
 ```
 
 #### Run batch benchmark:
@@ -69,7 +110,7 @@ python cli.py batch --dir test/images --limit 25 --output results.csv
 
 #### Validate container code math:
 ```powershell
-python cli.py validate --code TCLU4897918
+python cli.py validate --code CSLU1442268
 ```
 
 #### Fine-tune model on dataset:
@@ -79,35 +120,23 @@ python cli.py train --epochs 5 --fraction 0.08 --batch 16
 
 ---
 
-### 3. REST API Server (`api.py`)
-
-Double-click `start_api.bat` or run:
-```powershell
-python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload
-```
-Interactive Swagger API documentation will be available at:
-👉 `http://localhost:8000/docs`
-
-**Endpoints:**
-- `GET /health`: Health status and loaded model info.
-- `POST /api/v1/predict`: Multipart form image upload returning structured JSON.
-- `POST /api/v1/validate`: Validates code against ISO 6346 with detailed calculation breakdown.
-- `GET /api/v1/sample`: Retrieves random sample image path from test dataset.
-
----
-
 ## 📁 Repository Structure
 
 ```
 ContainerRecog/
+├── templates/
+│   └── camera.html          # Mobile-first Phone Camera Scanner UI
 ├── app.py                   # Streamlit Interactive Web Application
 ├── cli.py                   # Command-line Interface tool
-├── api.py                   # FastAPI REST server
+├── api.py                   # FastAPI REST server & Mobile Scanner
 ├── pipeline.py              # End-to-end ContainerRecognitionPipeline
 ├── container_parser.py      # ISO 6346 Validator, Modulo-11 Math, Carrier Database
 ├── ocr_engine.py            # RapidOCR wrapper with CLAHE & upscaling
 ├── start_app.bat            # 1-Click launcher for Web App
 ├── start_api.bat            # 1-Click launcher for REST API
+├── start_phone_scanner.bat  # 1-Click launcher for Mobile Scanner
+├── start_phone_tunnel.bat   # 1-Click Cloudflare HTTPS tunnel for Phone Camera
+├── connect_usb.bat          # 1-Click USB reverse port forward for Android
 ├── requirements.txt         # Python package dependencies
 ├── data.yaml                # Roboflow dataset configuration
 ├── weights/

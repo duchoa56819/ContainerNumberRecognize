@@ -1,17 +1,19 @@
 """
 FastAPI REST API Server for Container Number Recognition and ISO 6346 Validation.
+Includes built-in Mobile Phone Camera Scanner interface.
 """
 import io
 import os
 import glob
 import random
+import socket
 from typing import Optional
 import cv2
 import numpy as np
 from PIL import Image
 from fastapi import FastAPI, File, UploadFile, Query, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, Response, HTMLResponse
 from pydantic import BaseModel
 
 from pipeline import ContainerRecognitionPipeline
@@ -23,7 +25,7 @@ from container_parser import (
 )
 
 app = FastAPI(
-    title="ContainerLens API",
+    title="ContainerLens API & Mobile Scanner",
     description="High-performance ISO 6346 Shipping Container Number Recognition & Validation API",
     version="1.0.0"
 )
@@ -41,8 +43,31 @@ app.add_middleware(
 pipeline = ContainerRecognitionPipeline("weights/container_detector.pt")
 
 
+def get_local_ip():
+    """Detects local LAN IP address."""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
+
+
 class ValidateRequest(BaseModel):
     code: str
+
+
+@app.get("/", response_class=HTMLResponse)
+@app.get("/camera", response_class=HTMLResponse)
+def mobile_camera_app():
+    """Serves the Mobile Camera Scanner web client."""
+    html_path = os.path.join(os.path.dirname(__file__), "templates", "camera.html")
+    if os.path.exists(html_path):
+        with open(html_path, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse("<h2>Mobile scanner template not found.</h2>")
 
 
 @app.get("/health")
@@ -51,7 +76,8 @@ def health_check():
         "status": "healthy",
         "service": "ContainerLens API",
         "yolo_loaded": pipeline.yolo is not None,
-        "ocr_engine": "RapidOCR (ONNX Runtime)"
+        "ocr_engine": "RapidOCR (ONNX Runtime)",
+        "local_ip": get_local_ip()
     }
 
 
@@ -113,4 +139,11 @@ def get_sample():
 
 if __name__ == "__main__":
     import uvicorn
+    local_ip = get_local_ip()
+    print("=" * 65)
+    print("🚢 ContainerLens Mobile Camera Scanner Server")
+    print(f"📱 Phone Browser URL (Same Wi-Fi) : http://{local_ip}:8000/camera")
+    print(f"💻 Local Computer URL             : http://localhost:8000/camera")
+    print(f"📚 Interactive API Docs           : http://localhost:8000/docs")
+    print("=" * 65)
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
