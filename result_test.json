@@ -1,0 +1,242 @@
+{
+  "container_number": "TCLU4897918",
+  "formatted_number": "TCLU 489791 [8]",
+  "owner_code": "TCL",
+  "owner_name": "Triton International",
+  "category_char": "U",
+  "category_description": "Freight Container (All standard shipping containers)",
+  "serial_number": "489791",
+  "check_digit": "8",
+  "expected_check_digit": "8",
+  "is_valid": true,
+  "size_type_code": "45G1",
+  "size_type_desc": "40ft High Cube General Purpose Container (9ft 6in)",
+  "repaired": true,
+  "all_candidates": [
+    {
+      "code": "TCLU4897918",
+      "repaired": true,
+      "confidence": 0.85,
+      "known_owner": true
+    },
+    {
+      "code": "IOLU4897910",
+      "repaired": true,
+      "confidence": 0.85,
+      "known_owner": false
+    },
+    {
+      "code": "MOEU1010484",
+      "repaired": true,
+      "confidence": 0.85,
+      "known_owner": false
+    }
+  ],
+  "detected_regions": [
+    {
+      "box": [
+        196,
+        19,
+        427,
+        370
+      ],
+      "confidence": 0.33769163489341736,
+      "class_id": 0
+    }
+  ],
+  "selected_crop_box": [
+    178,
+    0,
+    445,
+    398
+  ],
+  "raw_ocr_texts": [
+    "TCLU489791",
+    "45G1",
+    "2.9m",
+    "119.6",
+    "81",
+    "MOER",
+    "10L0489791",
+    "19.6"
+  ],
+  "ocr_detections": [
+    {
+      "box": [
+        [
+          229.0,
+          35.0
+        ],
+        [
+          256.0,
+          35.0
+        ],
+        [
+          258.0,
+          328.0
+        ],
+        [
+          231.0,
+          329.0
+        ]
+      ],
+      "text": "TCLU489791",
+      "score": 0.732646335255016
+    },
+    {
+      "box": [
+        [
+          353.0,
+          40.0
+        ],
+        [
+          378.0,
+          40.0
+        ],
+        [
+          378.0,
+          146.0
+        ],
+        [
+          353.0,
+          146.0
+        ]
+      ],
+      "text": "45G1",
+      "score": 0.6383679270744324
+    },
+    {
+      "box": [
+        [
+          344.0,
+          164.0
+        ],
+        [
+          384.0,
+          164.0
+        ],
+        [
+          384.0,
+          179.0
+        ],
+        [
+          344.0,
+          179.0
+        ]
+      ],
+      "text": "2.9m",
+      "score": 0.7276512145996094
+    },
+    {
+      "box": [
+        [
+          343.0,
+          181.0
+        ],
+        [
+          383.0,
+          179.0
+        ],
+        [
+          384.0,
+          197.0
+        ],
+        [
+          344.0,
+          199.0
+        ]
+      ],
+      "text": "119.6",
+      "score": 0.5778951247533163
+    },
+    {
+      "box": [
+        [
+          343.0,
+          263.0
+        ],
+        [
+          383.0,
+          263.0
+        ],
+        [
+          383.0,
+          280.0
+        ],
+        [
+          343.0,
+          280.0
+        ]
+      ],
+      "text": "81",
+      "score": 0.644149919350942
+    },
+    {
+      "box": [
+        [
+          346.0,
+          332.0
+        ],
+        [
+          377.0,
+          331.0
+        ],
+        [
+          378.0,
+          339.0
+        ],
+        [
+          346.0,
+          340.0
+        ]
+      ],
+      "text": "MOER",
+      "score": 0.5529476374387741
+    },
+    {
+      "box": [
+        [
+          230.0,
+          35.0
+        ],
+        [
+          257.0,
+          35.0
+        ],
+        [
+          257.0,
+          323.0
+        ],
+        [
+          231.0,
+          323.0
+        ]
+      ],
+      "text": "10L0489791",
+      "score": 0.6561894823204387
+    },
+    {
+      "box": [
+        [
+          342.0,
+          181.0
+        ],
+        [
+          383.0,
+          179.0
+        ],
+        [
+          384.0,
+          197.0
+        ],
+        [
+          343.0,
+          199.0
+        ]
+      ],
+      "text": "19.6",
+      "score": 0.7095181703567505
+    }
+  ],
+  "elapsed_time_ms": 768.6
+}

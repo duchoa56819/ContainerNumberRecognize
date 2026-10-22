@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['con-region - v4 2023-12-06 3-24pm']
+
+roboflow:
+  workspace: vyom-jkjiv
+  project: container-t4xvw-suyj8
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/vyom-jkjiv/container-t4xvw-suyj8/dataset/2
