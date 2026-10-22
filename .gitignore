@@ -7,6 +7,13 @@ __pycache__/
 *.cache
 runs/
 
+# Gradle and Android intermediate build artifacts
+.gradle/
+**/build/
+build/
+.cxx/
+local.properties
+
 # Environments
 .env
 .venv
@@ -19,3 +26,4 @@ ENV/
 Thumbs.db
 .vscode/
 .idea/
+*.iml
